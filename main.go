@@ -8,7 +8,7 @@ import (
 
 	"github.com/alexedwards/flow"
 	homeController "github.com/cristiano-pacheco/go-prescription/controller/home"
-	userController "github.com/cristiano-pacheco/go-prescription/controller/user"
+	userActionsFactory "github.com/cristiano-pacheco/go-prescription/controller/user"
 	"github.com/cristiano-pacheco/go-prescription/model"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -33,7 +33,7 @@ func main() {
 	userModel := model.NewUserModel(db)
 
 	// Actions inicialization
-	userActions := userController.CreateUserActions(userModel)
+	userActions := userActionsFactory.CreateUserActions(userModel)
 
 	router.HandleFunc("/", homeController.HomeIndexAction, "GET")
 
