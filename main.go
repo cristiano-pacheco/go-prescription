@@ -32,14 +32,17 @@ func main() {
 	// Models inicialization
 	userModel := model.NewUserModel(db)
 
+	// Actions inicialization
+	userActions := userController.CreateUserActions(userModel)
+
 	router.HandleFunc("/", homeController.HomeIndexAction, "GET")
 
-	router.HandleFunc("/users", userController.UserIndexAction, "GET")
-	router.HandleFunc("/users/create", userController.UserCreateAction, "GET")
-	router.HandleFunc("/users", userController.UserStoreAction, "POST")
-	router.HandleFunc("/users/:id/edit", userController.UserEditAction, "GET")
-	router.HandleFunc("/users/:id/update", userController.UserUpdateAction, "POST")
-	router.HandleFunc("/users/:id/destroy", userController.UserDestroyAction, "POST")
+	router.Handle("/users", userActions.IndexAction, "GET")
+	router.Handle("/users/create", userActions.CreateAction, "GET")
+	router.Handle("/users", userActions.StoreAction, "POST")
+	router.Handle("/users/:id/edit", userActions.EditAction, "GET")
+	router.Handle("/users/:id/update", userActions.UpdateAction, "POST")
+	router.Handle("/users/:id/destroy", userActions.DestroyAction, "POST")
 
 	log.Printf("Starting server on %s", *addr)
 	err = http.ListenAndServe(*addr, router)
