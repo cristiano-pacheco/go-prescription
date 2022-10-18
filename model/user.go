@@ -11,7 +11,7 @@ type User struct {
 }
 
 type UserModel struct {
-	DB *sql.DB
+	db *sql.DB
 }
 
 func NewUserModel(db *sql.DB) *UserModel {
@@ -21,7 +21,7 @@ func NewUserModel(db *sql.DB) *UserModel {
 func (m *UserModel) Insert(name string) (int, error) {
 	stmt := `insert into user (name) values (?)`
 
-	result, err := m.DB.Exec(stmt, name)
+	result, err := m.db.Exec(stmt, name)
 	if err != nil {
 		return 0, err
 	}
@@ -36,7 +36,7 @@ func (m *UserModel) Insert(name string) (int, error) {
 
 func (m *UserModel) Get(id uint) (*User, error) {
 	stmt := `select id, name from user where id = ?`
-	row := m.DB.QueryRow(stmt, id)
+	row := m.db.QueryRow(stmt, id)
 	user := &User{}
 	err := row.Scan(&user.ID, &user.Name)
 	if err != nil {
@@ -51,7 +51,7 @@ func (m *UserModel) Get(id uint) (*User, error) {
 
 func (m *UserModel) GetAll() ([]*User, error) {
 	stmt := `select id, name from user`
-	rows, err := m.DB.Query(stmt)
+	rows, err := m.db.Query(stmt)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func (m *UserModel) GetAll() ([]*User, error) {
 
 func (m *UserModel) Update(id uint, name string) error {
 	stmt := `update user set name = ? where id = ?`
-	_, err := m.DB.Exec(stmt, name, id)
+	_, err := m.db.Exec(stmt, name, id)
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func (m *UserModel) Update(id uint, name string) error {
 
 func (m *UserModel) Delete(id uint) error {
 	stmt := `delete from user where id = ?`
-	_, err := m.DB.Exec(stmt, id)
+	_, err := m.db.Exec(stmt, id)
 	if err != nil {
 		return err
 	}
