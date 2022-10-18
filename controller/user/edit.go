@@ -1,11 +1,23 @@
 package controller
 
 import (
-	"fmt"
+	"log"
 	"net/http"
+	"text/template"
 )
 
 func UserEditAction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "<h1>User Edit Action</h1>")
+	files := []string{"./view/layout/bootstrap.gohtml", "./view/user/edit.gohtml"}
+	templateSet, err := template.ParseFiles(files...)
+	if err != nil {
+		log.Print(err.Error())
+		http.Error(w, "Internal server error", 500)
+		return
+	}
+	err = templateSet.ExecuteTemplate(w, "bootstrap", nil)
+	if err != nil {
+		log.Print(err.Error())
+		http.Error(w, "Internal server error", 500)
+	}
 }

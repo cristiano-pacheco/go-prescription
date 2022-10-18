@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
@@ -10,6 +11,9 @@ import (
 )
 
 func main() {
+	addr := flag.String("addr", ":8000", "HTTP network address")
+	flag.Parse()
+
 	router := flow.New()
 
 	router.HandleFunc("/", homeController.HomeIndexAction, "GET")
@@ -21,7 +25,7 @@ func main() {
 	router.HandleFunc("/users/:id/update", userController.UserUpdateAction, "POST")
 	router.HandleFunc("/users/:id/destroy", userController.UserDestroyAction, "POST")
 
-	err := http.ListenAndServe(":8000", router)
+	err := http.ListenAndServe(*addr, router)
 
 	log.Fatal(err)
 }
