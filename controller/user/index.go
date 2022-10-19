@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/cristiano-pacheco/go-prescription/model"
@@ -17,5 +18,11 @@ func NewUserIndexAction(userModel *model.UserModel) *userIndexAction {
 
 func (action *userIndexAction) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	view.NewTemplate().Render(w, nil, "./view/layout/bootstrap.gohtml", "./view/user/index.gohtml")
+	users, err := action.userModel.GetAll()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	view.NewTemplate().Render(w, users, "./view/layout/bootstrap.gohtml", "./view/user/index.gohtml")
 }
