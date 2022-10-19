@@ -6,15 +6,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/alexedwards/flow"
-	homeController "github.com/cristiano-pacheco/go-prescription/controller/home"
-	userActionsFactory "github.com/cristiano-pacheco/go-prescription/controller/user"
 	"github.com/cristiano-pacheco/go-prescription/model"
+	"github.com/cristiano-pacheco/go-prescription/router"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
+	// APP flags declaration
 	addr := flag.String("addr", ":8000", "HTTP network address")
 	dsn := flag.String("dsn", "root:root@/prescription?parseTime=true", "MySQL data source name")
 	flag.Parse()
@@ -26,26 +25,14 @@ func main() {
 	}
 	defer db.Close()
 
-	// Router inicialization
-	router := flow.New()
-
 	// Models inicialization
-	userModel := model.NewUserModel(db)
+	models := model.CreateModels(db)
 
-	// Actions inicialization
-	userActions := userActionsFactory.CreateUserActions(userModel)
-
-	router.HandleFunc("/", homeController.HomeIndexAction, "GET")
-
-	router.Handle("/users", userActions.IndexAction, "GET")
-	router.Handle("/users/create", userActions.CreateAction, "GET")
-	router.Handle("/users", userActions.StoreAction, "POST")
-	router.Handle("/users/:id/edit", userActions.EditAction, "GET")
-	router.Handle("/users/:id/update", userActions.UpdateAction, "POST")
-	router.Handle("/users/:id/destroy", userActions.DestroyAction, "POST")
+	// Routes inicialization
+	router := router.CreateRouter(models)
 
 	log.Printf("Starting server on %s", *addr)
-	err = http.ListenAndServe(*addr, router)
+	err = http.ListenAndServe(*addr, router.Mux)
 	log.Fatal(err)
 }
 
