@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/cristiano-pacheco/go-prescription/model"
@@ -16,6 +16,16 @@ func NewUserStoreAction(userModel *model.UserModel) *userStoreAction {
 }
 
 func (action *userStoreAction) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "<h1>User Store Action</h1>")
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	_, err = action.userModel.Insert(r.PostForm.Get("name"))
+	if err != nil {
+		log.Printf("An error ocurriend during the user creation insert: %s", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/users", http.StatusSeeOther)
 }
