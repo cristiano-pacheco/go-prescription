@@ -11,6 +11,11 @@
                 <a href="/users" class="btn btn-outline-secondary btn-sm">Users List</a>
             </div>
             <br/>
+            {{range .Form.Errors}}
+                <div class="alert alert-danger" role="alert">
+                    {{.}}
+                </div>
+            {{end}}
             {{template "user-create-form" .}}
         </div>
     </div>
@@ -21,7 +26,7 @@
 <form action="/users/store" method="POST">
   <div class="mb-3">
     <label for="name" class="form-label">Name</label>
-    <input type="text" name="name" id="name" class="form-control" >
+    <input type="text" name="name" id="name" class="form-control" value="{{.Form.Name}}">
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
