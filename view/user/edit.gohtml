@@ -1,3 +1,28 @@
 {{define "content"}}
-    <h1>User Edit Page</h1>
+<br/>
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+    <div class="card">
+        <div class="card-header">
+            <h3>Edit User</h3>
+        </div>
+        <div class="card-body">
+            <div>
+                <a href="/users" class="btn btn-outline-secondary btn-sm">Users List</a>
+            </div>
+            <br/>
+            {{template "user-update-form" .}}
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{define "user-update-form"}}
+<form action="/users/{{.ID}}/update" method="POST">
+  <div class="mb-3">
+    <label for="name" class="form-label">Name</label>
+    <input type="text" name="name" id="name" class="form-control" value="{{.Name}}">
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 {{end}}
