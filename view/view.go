@@ -1,9 +1,9 @@
 package view
 
 import (
+	"html/template"
 	"log"
 	"net/http"
-	"text/template"
 )
 
 func NewTemplate() *Template {
