@@ -23,7 +23,7 @@ func CreateRouter(models *model.Models) *Router {
 	mux.Handle("/users/store", userActions.StoreAction, "POST")
 	mux.Handle("/users/:id/edit", userActions.EditAction, "GET")
 	mux.Handle("/users/:id/update", userActions.UpdateAction, "POST")
-	mux.Handle("/users/:id/destroy", userActions.DestroyAction, "POST")
+	mux.Handle("/users/:id/destroy", userActions.DestroyAction, "GET")
 
 	return &Router{Mux: mux}
 }

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/cristiano-pacheco/go-prescription/model"
@@ -16,6 +15,10 @@ func NewUserUpdateAction(userModel *model.UserModel) *userUpdateAction {
 }
 
 func (action *userUpdateAction) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "<h1>User Update Action</h1>")
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
 }
