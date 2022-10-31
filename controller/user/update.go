@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/alexedwards/flow"
 	"github.com/cristiano-pacheco/go-prescription/controller"
 	"github.com/cristiano-pacheco/go-prescription/model"
 	"github.com/cristiano-pacheco/go-prescription/validator"
@@ -27,7 +26,7 @@ func (action *userUpdateAction) ServeHTTP(w http.ResponseWriter, r *http.Request
 	}
 
 	// Parse the user ID from URL
-	id, err := strconv.Atoi(flow.Param(r.Context(), "id"))
+	id, err := strconv.Atoi(controller.ReadParameter(r, "id"))
 	if err != nil {
 		controller.RenderServerError(w, err)
 		return
@@ -62,6 +61,7 @@ func (action *userUpdateAction) ServeHTTP(w http.ResponseWriter, r *http.Request
 	err = action.userModel.Update(uint(id), r.PostForm.Get("name"))
 	if err != nil {
 		controller.RenderServerError(w, err)
+		return
 	}
 
 	http.Redirect(w, r, "/users", http.StatusSeeOther)

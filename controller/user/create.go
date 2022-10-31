@@ -3,14 +3,13 @@ package controller
 import (
 	"net/http"
 
-	"github.com/cristiano-pacheco/go-prescription/model"
 	"github.com/cristiano-pacheco/go-prescription/view"
 )
 
 type userCreateAction struct {
 }
 
-func NewUserCreateAction(userModel *model.UserModel) *userCreateAction {
+func NewUserCreateAction() *userCreateAction {
 	return &userCreateAction{}
 }
 

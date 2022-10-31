@@ -15,7 +15,7 @@ type UserActions struct {
 
 func CreateUserActions(userModel *model.UserModel) *UserActions {
 	return &UserActions{
-		CreateAction:  NewUserCreateAction(userModel),
+		CreateAction:  NewUserCreateAction(),
 		DestroyAction: NewUserDestroyAction(userModel),
 		EditAction:    NewUserEditAction(userModel),
 		IndexAction:   NewUserIndexAction(userModel),
