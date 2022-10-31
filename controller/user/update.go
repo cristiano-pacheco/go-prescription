@@ -47,6 +47,8 @@ func (action *userUpdateAction) ServeHTTP(w http.ResponseWriter, r *http.Request
 	}
 
 	form.CheckField(validator.NotBlank(form.Name), "name", "The name field cannot be blank")
+	form.CheckField(validator.MaxChars(form.Name, 255), "name", "The name field cannot be more than 255 characters long")
+	form.CheckField(validator.GreaterThanZero(form.ID), "id", "The given user has to be greater than zero")
 
 	if !form.IsValid() {
 		data := view.NewTemplateData()

@@ -47,6 +47,11 @@ func MaxChars(value string, n int) bool {
 	return utf8.RuneCountInString(value) <= n
 }
 
+// GreaterThanZero returns true if a value is greater than zero
+func GreaterThanZero(value int) bool {
+	return value > 0
+}
+
 // PermittedInt() returns true if a value is in a list of permitted integers.
 func PermittedInt(value int, permittedValues ...int) bool {
 	for i := range permittedValues {

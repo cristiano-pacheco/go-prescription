@@ -34,6 +34,7 @@ func (action *userStoreAction) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 
 	form.CheckField(validator.NotBlank(form.Name), "name", "The name field cannot be blank")
+	form.CheckField(validator.MaxChars(form.Name, 255), "name", "The name field cannot be mmore than 255 characters long")
 
 	if !form.IsValid() {
 		data := view.NewTemplateData()
