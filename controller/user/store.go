@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 
+	"github.com/cristiano-pacheco/go-prescription/controller"
 	"github.com/cristiano-pacheco/go-prescription/model"
 	"github.com/cristiano-pacheco/go-prescription/validator"
 	"github.com/cristiano-pacheco/go-prescription/view"
@@ -25,7 +25,7 @@ func (action *userStoreAction) ServeHTTP(w http.ResponseWriter, r *http.Request)
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		controller.RenderClientError(w, http.StatusBadRequest)
 		return
 	}
 
@@ -46,8 +46,7 @@ func (action *userStoreAction) ServeHTTP(w http.ResponseWriter, r *http.Request)
 
 	_, err = action.userModel.Insert(r.PostForm.Get("name"))
 	if err != nil {
-		log.Printf("An error ocurriend during the user creation insert: %s", err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		controller.RenderServerError(w, err)
 		return
 	}
 

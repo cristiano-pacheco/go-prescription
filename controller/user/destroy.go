@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/alexedwards/flow"
+	"github.com/cristiano-pacheco/go-prescription/controller"
 	"github.com/cristiano-pacheco/go-prescription/model"
 )
 
@@ -17,14 +17,14 @@ func NewUserDestroyAction(userModel *model.UserModel) *userDestroyAction {
 }
 
 func (action *userDestroyAction) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(flow.Param(r.Context(), "id"))
+	id, err := strconv.Atoi(controller.ReadParameter(r, "id"))
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		controller.RenderServerError(w, err)
 		return
 	}
 	err = action.userModel.Delete(uint(id))
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		controller.RenderServerError(w, err)
 		return
 	}
 	http.Redirect(w, r, "/users", http.StatusSeeOther)

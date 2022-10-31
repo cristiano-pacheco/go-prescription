@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/alexedwards/flow"
+	"github.com/cristiano-pacheco/go-prescription/controller"
 	"github.com/cristiano-pacheco/go-prescription/model"
 	"github.com/cristiano-pacheco/go-prescription/validator"
 	"github.com/cristiano-pacheco/go-prescription/view"
@@ -28,13 +29,14 @@ func (action *userUpdateAction) ServeHTTP(w http.ResponseWriter, r *http.Request
 	// Parse the user ID from URL
 	id, err := strconv.Atoi(flow.Param(r.Context(), "id"))
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		controller.RenderServerError(w, err)
+		return
 	}
 
 	// Parse the form
 	err = r.ParseForm()
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		controller.RenderServerError(w, err)
 		return
 	}
 
@@ -49,7 +51,6 @@ func (action *userUpdateAction) ServeHTTP(w http.ResponseWriter, r *http.Request
 	if !form.IsValid() {
 		data := view.NewTemplateData()
 		data.Form = form
-		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		view.NewTemplate().Render(w, data, "./view/layout/bootstrap.gohtml", "./view/user/edit.gohtml")
 		return
@@ -58,7 +59,7 @@ func (action *userUpdateAction) ServeHTTP(w http.ResponseWriter, r *http.Request
 	// Updates the user in the database
 	err = action.userModel.Update(uint(id), r.PostForm.Get("name"))
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		controller.RenderServerError(w, err)
 	}
 
 	http.Redirect(w, r, "/users", http.StatusSeeOther)

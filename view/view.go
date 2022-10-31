@@ -21,6 +21,7 @@ func NewTemplateData() *TemplateData {
 }
 
 func (t *Template) Render(w http.ResponseWriter, data interface{}, templates ...string) {
+	w.Header().Set("Content-Type", "text/html")
 	templateSet, err := template.ParseFiles(templates...)
 	if err != nil {
 		log.Print(err.Error())

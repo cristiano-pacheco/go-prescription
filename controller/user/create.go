@@ -15,6 +15,5 @@ func NewUserCreateAction(userModel *model.UserModel) *userCreateAction {
 }
 
 func (action *userCreateAction) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
 	view.NewTemplate().Render(w, nil, "./view/layout/bootstrap.gohtml", "./view/user/create.gohtml")
 }
