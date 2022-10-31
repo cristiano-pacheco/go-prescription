@@ -8,11 +8,10 @@ import (
 )
 
 type userCreateAction struct {
-	userModel *model.UserModel
 }
 
 func NewUserCreateAction(userModel *model.UserModel) *userCreateAction {
-	return &userCreateAction{userModel: userModel}
+	return &userCreateAction{}
 }
 
 func (action *userCreateAction) ServeHTTP(w http.ResponseWriter, r *http.Request) {

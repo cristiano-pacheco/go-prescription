@@ -13,34 +13,34 @@ type userStoreAction struct {
 	userModel *model.UserModel
 }
 
-type userCreateForm struct {
-	Name   string
-	Errors map[string]string
-}
-
 func NewUserStoreAction(userModel *model.UserModel) *userStoreAction {
 	return &userStoreAction{userModel: userModel}
 }
 
 func (action *userStoreAction) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	type userCreateForm struct {
+		Name string
+		validator.Validator
+	}
+
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	uv := validator.UserValidator{}
-	validationErrors := uv.Validate(r.PostForm.Get("name"))
 	form := userCreateForm{
-		Name:   r.PostForm.Get("name"),
-		Errors: validationErrors,
+		Name: r.PostForm.Get("name"),
 	}
 
-	templateData := view.TemplateData{}
-	templateData.Form = form
+	form.CheckField(validator.NotBlank(form.Name), "name", "The name field cannot be blank")
 
-	if len(validationErrors) > 0 {
-		view.NewTemplate().RenderFormWithValidationErrors(w, &templateData)
+	if !form.IsValid() {
+		data := view.NewTemplateData()
+		data.Form = form
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		view.NewTemplate().Render(w, data, "./view/layout/bootstrap.gohtml", "./view/user/create.gohtml")
 		return
 	}
 
@@ -50,5 +50,6 @@ func (action *userStoreAction) ServeHTTP(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+
 	http.Redirect(w, r, "/users", http.StatusSeeOther)
 }

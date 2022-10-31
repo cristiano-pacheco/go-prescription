@@ -19,6 +19,12 @@ func NewUserUpdateAction(userModel *model.UserModel) *userUpdateAction {
 }
 
 func (action *userUpdateAction) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	type userUpdateForm struct {
+		ID   int
+		Name string
+		validator.Validator
+	}
+
 	// Parse the user ID from URL
 	id, err := strconv.Atoi(flow.Param(r.Context(), "id"))
 	if err != nil {
@@ -32,19 +38,20 @@ func (action *userUpdateAction) ServeHTTP(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// Validates the form data
-	uv := validator.UserValidator{}
-	validationErrors := uv.Validate(r.PostForm.Get("name"))
-	form := userUpdateForm{
-		Name:   r.PostForm.Get("name"),
-		Errors: validationErrors,
-	}
-	templateData := view.TemplateData{}
-	templateData.Form = form
-
 	// If the form data is invalid, render the page with the validation errors
-	if len(validationErrors) > 0 {
-		view.NewTemplate().RenderFormWithValidationErrors(w, &templateData)
+	form := userUpdateForm{
+		ID:   id,
+		Name: r.PostForm.Get("name"),
+	}
+
+	form.CheckField(validator.NotBlank(form.Name), "name", "The name field cannot be blank")
+
+	if !form.IsValid() {
+		data := view.NewTemplateData()
+		data.Form = form
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		view.NewTemplate().Render(w, data, "./view/layout/bootstrap.gohtml", "./view/user/edit.gohtml")
 		return
 	}
 

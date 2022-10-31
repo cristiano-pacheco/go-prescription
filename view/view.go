@@ -16,6 +16,10 @@ type TemplateData struct {
 	Form any
 }
 
+func NewTemplateData() *TemplateData {
+	return &TemplateData{}
+}
+
 func (t *Template) Render(w http.ResponseWriter, data interface{}, templates ...string) {
 	templateSet, err := template.ParseFiles(templates...)
 	if err != nil {

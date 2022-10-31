@@ -6,6 +6,7 @@ import (
 
 	"github.com/alexedwards/flow"
 	"github.com/cristiano-pacheco/go-prescription/model"
+	"github.com/cristiano-pacheco/go-prescription/validator"
 	"github.com/cristiano-pacheco/go-prescription/view"
 )
 
@@ -17,12 +18,12 @@ func NewUserEditAction(userModel *model.UserModel) *userEditAction {
 	return &userEditAction{userModel: userModel}
 }
 
-type userUpdateForm struct {
-	Name   string
-	Errors map[string]string
-}
-
 func (action *userEditAction) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	type userUpdateForm struct {
+		ID   int
+		Name string
+		validator.Validator
+	}
 	w.Header().Set("Content-Type", "text/html")
 	id, err := strconv.Atoi(flow.Param(r.Context(), "id"))
 	if err != nil {
@@ -34,5 +35,11 @@ func (action *userEditAction) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	view.NewTemplate().Render(w, user, "./view/layout/bootstrap.gohtml", "./view/user/edit.gohtml")
+	form := userUpdateForm{
+		ID:   user.ID,
+		Name: user.Name,
+	}
+	data := view.NewTemplateData()
+	data.Form = form
+	view.NewTemplate().Render(w, data, "./view/layout/bootstrap.gohtml", "./view/user/edit.gohtml")
 }

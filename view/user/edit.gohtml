@@ -11,6 +11,11 @@
                 <a href="/users" class="btn btn-outline-secondary btn-sm">Users List</a>
             </div>
             <br/>
+            {{range .Form.Errors}}
+                <div class="alert alert-danger" role="alert">
+                    {{.}}
+                </div>
+            {{end}}
             {{template "user-update-form" .}}
         </div>
     </div>
@@ -18,10 +23,10 @@
 {{end}}
 
 {{define "user-update-form"}}
-<form action="/users/{{.ID}}/update" method="POST">
+<form action="/users/{{.Form.ID}}/update" method="POST">
   <div class="mb-3">
     <label for="name" class="form-label">Name</label>
-    <input type="text" name="name" id="name" class="form-control" value="{{.Name}}">
+    <input type="text" name="name" id="name" class="form-control" value="{{.Form.Name}}">
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
